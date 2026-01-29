@@ -1,0 +1,90 @@
+-- Switch to the Pluggable Database where APP_USER exists
+ALTER SESSION SET CONTAINER = FREEPDB1; 
+
+-- Grant permissions to the app user
+GRANT ALL PRIVILEGES TO unzip_user;
+GRANT SELECT ANY DICTIONARY TO unzip_user;
+GRANT UNLIMITED TABLESPACE TO unzip_user;
+
+-- Switch to the user schema so the table is owned by unzip_user
+ALTER SESSION SET CURRENT_SCHEMA = unzip_user;
+
+-- Create table
+CREATE TABLE kyc_document_unzip (
+    KYC_DOCUMENT_UNZIP_ID         VARCHAR2(36) NOT NULL,
+    KYC_DOCUMENT_ID               VARCHAR2(36),
+    DOCUMENT_COMPONENT_STATE      VARCHAR2(36),
+    DOCUMENT_LINK_ID              VARCHAR2(50),
+    DOCUMENT_NAME                 VARCHAR2(4000),
+    DOCUMENT_PATH                 VARCHAR2(4000),
+    DOCUMENT_S3_PATH              VARCHAR2(4000),
+    FILE_TYPE                     VARCHAR2(256),
+    FILE_SIZE                     NUMBER,
+    CONTAINS_ZIP_CHILD            VARCHAR2(2),
+    ANCESTOR_L1                   VARCHAR2(4000),
+    ANCESTOR_L2                   VARCHAR2(4000),
+    ANCESTOR_L3                   VARCHAR2(4000),
+    ANCESTOR_L4                   VARCHAR2(4000),
+    ANCESTOR_L5                   VARCHAR2(4000),
+    ANCESTOR_L6                   VARCHAR2(4000),
+    ANCESTOR_L7                   VARCHAR2(4000),
+    ANCESTOR_L8                   VARCHAR2(4000),
+    ANCESTOR_L9                   VARCHAR2(4000),
+    ANCESTOR_L10                  VARCHAR2(4000),
+    ANCESTOR_L11                  VARCHAR2(4000),
+    ANCESTOR_L12                  VARCHAR2(4000),
+    ANCESTOR_L13                  VARCHAR2(4000),
+    ANCESTOR_L14                  VARCHAR2(4000),
+    ANCESTOR_L15                  VARCHAR2(4000),
+    ANCESTOR_L16                  VARCHAR2(4000),
+    ANCESTOR_L17                  VARCHAR2(4000),
+    ANCESTOR_L18                  VARCHAR2(4000),
+    ANCESTOR_L19                  VARCHAR2(4000),
+    ANCESTOR_L20                  VARCHAR2(4000),
+    UPLOADED_BY                   VARCHAR2(256),
+    IS_CLASSIFIED                 VARCHAR2(2),
+    IS_EXTRACTED                  VARCHAR2(2),
+    CLASSIFICATION_NAME           VARCHAR2(4000),
+    S0_FLAG                       VARCHAR2(2),
+    S1_FLAG                       VARCHAR2(2),
+    S2_FLAG                       VARCHAR2(2),
+    S3_FLAG                       VARCHAR2(2),
+    S4_FLAG                       VARCHAR2(2),
+    BATCH_ID                      VARCHAR2(25),
+    BATCH_DT                      DATE,
+    BATCH_STATUS                  VARCHAR2(256),
+    CREATE_ID                     VARCHAR2(25),
+    CREATE_DT                     DATE,
+    LST_UPD_ID                    VARCHAR2(25),
+    LST_UPD_DT                    DATE,
+    VER_NUM                       NUMBER,
+    ACT_STRT_DT                   DATE,
+    ACT_END_DT                    DATE,
+    KYC_SHARD_NUM                 NUMBER,
+    LST_UPD_TIME                  NUMBER,
+    RESERVED_FIELD1               VARCHAR2(4000),
+    RESERVED_FIELD2               VARCHAR2(4000),
+    RESERVED_FIELD3               VARCHAR2(4000),
+    RESERVED_FIELD4               VARCHAR2(4000),
+    RESERVED_FIELD5               VARCHAR2(4000),
+    RESERVED_FIELD6               VARCHAR2(4000),
+    RESERVED_FIELD7               VARCHAR2(4000),
+    RESERVED_FIELD8               VARCHAR2(4000),
+    RESERVED_FIELD9               VARCHAR2(4000),
+    RESERVED_FIELD10              VARCHAR2(4000),
+    UNZIP_UPLOADED_KYC_DOC_ID     VARCHAR2(36),
+    PARENT_DOC_LINK_ID            VARCHAR2(50),
+    UNZIP_DOC_LINK_ID             VARCHAR2(50),
+    CLIENT_ID                     VARCHAR2(30),
+    CORE_COUNTRY                  VARCHAR2(2),
+    CORE_REGION                   VARCHAR2(30),
+    COMPONENT_COUNTRY             VARCHAR2(2),
+    COMPONENT_REGION              VARCHAR2(30),
+    NAME_RCVD_FROM_DOCUMENTUM     VARCHAR2(4000),
+    COMPONENT_ID                  VARCHAR2(36),
+    COMPONENT_TYPE                VARCHAR2(20),
+    COMPONENT_SUB_CATEGORY        VARCHAR2(32),
+    LEGAL_VEHICLE                 VARCHAR2(256)
+);
+
+

@@ -1,0 +1,111 @@
+services:
+  documentum:
+    build: .
+    container_name: documentum
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./documentum-pvc-data:/data/documents
+      - ./test:/data/preload_source
+    networks:
+      - unzip-network
+
+  # sql-server:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   platform: linux/amd64
+  #   container_name: sql-server
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - ./sql_data:/var/opt/mssql/data
+  #   networks:
+  #     - unzip-network
+
+  oracle-server:
+    image: gvenzl/oracle-free:latest
+    container_name: oracle-server
+    environment:
+      - ORACLE_PASSWORD=YourStrong!Passw0rd
+      - APP_USER=unzip_user
+      - APP_USER_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "1521:1521"
+    volumes:
+      - ./oracle_sql/init.sql:/container-entrypoint-initdb.d/init.sql
+      - ./oracle_data:/opt/oracle/oradata
+    networks:
+      - unzip-network
+
+  # java-thick-client:
+  #   build: ./java-client
+  #   container_name: java-thick-client
+  #   depends_on:
+  #     - oracle-server
+  #   networks:
+  #     - unzip-network
+
+  # sql-init:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   platform: linux/amd64
+  #   container_name: sql-init
+  #   depends_on:
+  #     - sql-server
+  #   volumes:
+  #     - ./sql/init.sql:/init.sql
+  #     - ./sql/setup.sh:/setup.sh
+  #   command: /bin/bash /setup.sh
+  #   environment:
+  #     - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+  #   networks:
+  #     - unzip-network
+
+  sql-client:
+    image: dbeaver/cloudbeaver:latest
+    container_name: sql-client
+    ports:
+      - "8978:8978"
+    volumes:
+      - ./cloudbeaver-workspace:/opt/cloudbeaver/workspace
+    networks:
+      - unzip-network
+
+  s3-server:
+    image: minio/minio:latest
+    container_name: s3-server
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=unzip_user
+      - MINIO_ROOT_PASSWORD=YourStrong!Passw0rd
+    volumes:
+      - ./s3_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - unzip-network
+
+  s3-init:
+    image: minio/mc:latest
+    container_name: s3-init
+    depends_on:
+      - s3-server
+    environment:
+      - MINIO_ROOT_USER=unzip_user
+      - MINIO_ROOT_PASSWORD=YourStrong!Passw0rd
+    entrypoint: >
+      /bin/sh -c "
+      until (mc alias set myminio http://s3-server:9000 unzip_user YourStrong!Passw0rd); do echo '...waiting...' && sleep 1; done;
+      mc mb myminio/unzip-documents;
+      mc policy set public myminio/unzip-documents;
+      exit 0;
+      "
+    networks:
+      - unzip-network
+
+networks:
+  unzip-network:
+    name: unzip-network
+    external: true
