@@ -7,3 +7,8 @@
 /documentum-pvc-data
 /s3_data
 /sql_data
+
+*.key
+*.pem
+*.log
+*.sqlite3
